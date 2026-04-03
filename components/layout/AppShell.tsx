@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TOOLS } from "@/lib/tools-registry";
 import { Topbar } from "./Topbar";
@@ -22,8 +22,9 @@ export function AppShell() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const toolParam = searchParams.get("tool");
-  const activeTool =
-    TOOLS.find((t) => t.id === toolParam)?.id ?? TOOLS[0].id;
+  const activeTool = TOOLS.find((t) => t.id === toolParam) ?? TOOLS[0];
+
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const selectTool = useCallback(
     (id: string) => {
@@ -37,7 +38,6 @@ export function AppShell() {
   // Keyboard shortcuts
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
-      // Ignore when focus is in an input
       if (
         e.target instanceof HTMLInputElement ||
         e.target instanceof HTMLTextAreaElement
@@ -51,20 +51,22 @@ export function AppShell() {
   }, [selectTool]);
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
-      <Topbar />
+    <div className="flex h-screen flex-col overflow-hidden bg-background">
+      <Topbar
+        activeTool={activeTool}
+        onToggleCollapse={() => setIsCollapsed((c) => !c)}
+      />
       <div className="flex flex-1 overflow-hidden max-md:flex-col">
-        {/* Sidebar — 33% on desktop, horizontal strip on mobile */}
-        <div className="w-[33%] min-w-[220px] max-w-[320px] flex-shrink-0 overflow-y-auto max-md:w-full max-md:max-w-full max-md:overflow-x-auto max-md:overflow-y-hidden">
-          <ToolSidebar
-            tools={TOOLS}
-            activeTool={activeTool}
-            onSelect={selectTool}
-          />
-        </div>
-        {/* Main panel */}
+        {/* Sidebar */}
+        <ToolSidebar
+          tools={TOOLS}
+          activeTool={activeTool.id}
+          onSelect={selectTool}
+          isCollapsed={isCollapsed}
+        />
+        {/* Main content */}
         <main className="flex-1 overflow-y-auto bg-background">
-          {renderTool(activeTool)}
+          {renderTool(activeTool.id)}
         </main>
       </div>
     </div>

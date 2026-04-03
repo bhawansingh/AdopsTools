@@ -3,39 +3,93 @@
 @tailwind utilities;
 
 @layer base {
+  /* ─── LIGHT MODE ─────────────────────────────── */
   :root {
-    /* shadcn HSL vars — dark-only site, values set directly */
-    --background:           240 6% 4%;       /* #09090B */
-    --foreground:           60 6% 93%;       /* #F0EFE8 */
-    --card:                 240 5% 9%;       /* #18181C */
-    --card-foreground:      60 6% 93%;
-    --popover:              240 5% 9%;
-    --popover-foreground:   60 6% 93%;
-    --primary:              74 100% 64%;     /* lime — same as accent */
-    --primary-foreground:   0 0% 0%;
-    --secondary:            240 4% 13%;      /* #1F1F25 */
-    --secondary-foreground: 60 6% 93%;
-    --muted:                240 4% 13%;
-    --muted-foreground:     240 4% 42%;      /* #6B6B70 */
-    --accent:               74 100% 64%;     /* #D4FF47 */
-    --accent-foreground:    0 0% 0%;
-    --destructive:          0 63% 59%;
-    --destructive-foreground: 60 6% 93%;
-    --border:               240 5% 15%;      /* rgba(255,255,255,0.07) equiv */
-    --input:                240 5% 15%;
-    --ring:                 74 100% 64%;
-    --radius:               0.625rem;        /* 10px */
+    --background:             0 0% 100%;
+    --foreground:             240 10% 3.9%;
+    --card:                   0 0% 100%;
+    --card-foreground:        240 10% 3.9%;
+    --popover:                0 0% 100%;
+    --popover-foreground:     240 10% 3.9%;
+    --primary:                74 80% 36%;        /* lime, darkened for light-mode contrast */
+    --primary-foreground:     0 0% 0%;
+    --secondary:              240 4.8% 95.9%;    /* zinc-100 */
+    --secondary-foreground:   240 5.9% 10%;
+    --muted:                  240 4.8% 95.9%;
+    --muted-foreground:       240 3.8% 46.1%;    /* zinc-500 */
+    --accent:                 74 80% 36%;
+    --accent-foreground:      0 0% 0%;
+    --destructive:            0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border:                 240 5.9% 90%;      /* zinc-200 */
+    --input:                  240 5.9% 90%;
+    --ring:                   74 80% 36%;
+    --radius:                 0.625rem;
 
-    /* Custom tokens */
-    --surface:              240 5% 7%;       /* #111115 */
-    --card-hover:           240 4% 13%;      /* #1F1F25 */
-    --border-hover:         240 5% 25%;
-    --accent-dim:           74 100% 64% / 0.10;
-    --accent-text:          81 100% 44%;     /* #B8E000 */
-    --subtle:               240 4% 24%;      /* #3A3A40 */
-    --info:                 213 100% 65%;    /* #4A9EFF */
-    --teal:                 160 62% 50%;     /* #2DD4A0 */
-    --negative:             0 63% 59%;       /* #E24B4A */
+    /* Sidebar */
+    --sidebar-background:         240 4.8% 95.9%;   /* zinc-100 */
+    --sidebar-foreground:         240 5.9% 10%;
+    --sidebar-primary:            74 80% 36%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent:             240 5.9% 88%;      /* zinc-200 */
+    --sidebar-accent-foreground:  240 5.9% 10%;
+    --sidebar-border:             240 5.9% 90%;
+    --sidebar-ring:               74 80% 36%;
+
+    /* Custom calculator tokens */
+    --surface:        240 4.8% 95.9%;
+    --card-hover:     240 4.8% 91%;
+    --border-hover:   240 5.9% 84%;
+    --accent-dim:     74 80% 36% / 0.10;
+    --accent-text:    74 80% 28%;
+    --subtle:         240 5.9% 72%;
+    --info:           213 94% 45%;
+    --teal:           160 62% 36%;
+    --negative:       0 72% 51%;
+  }
+
+  /* ─── DARK MODE ──────────────────────────────── */
+  .dark {
+    --background:             240 10% 3.9%;       /* zinc-950 */
+    --foreground:             0 0% 98%;
+    --card:                   240 10% 3.9%;
+    --card-foreground:        0 0% 98%;
+    --popover:                240 10% 3.9%;
+    --popover-foreground:     0 0% 98%;
+    --primary:                74 100% 64%;         /* lime #D4FF47 */
+    --primary-foreground:     0 0% 0%;
+    --secondary:              240 3.7% 15.9%;      /* zinc-900 */
+    --secondary-foreground:   0 0% 98%;
+    --muted:                  240 3.7% 15.9%;
+    --muted-foreground:       240 5% 64.9%;        /* zinc-400 */
+    --accent:                 74 100% 64%;
+    --accent-foreground:      0 0% 0%;
+    --destructive:            0 63% 59%;
+    --destructive-foreground: 0 0% 98%;
+    --border:                 240 3.7% 15.9%;
+    --input:                  240 3.7% 15.9%;
+    --ring:                   74 100% 64%;
+
+    /* Sidebar */
+    --sidebar-background:         240 5.9% 10%;        /* zinc-900 */
+    --sidebar-foreground:         0 0% 98%;
+    --sidebar-primary:            74 100% 64%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent:             240 3.7% 15.9%;
+    --sidebar-accent-foreground:  0 0% 98%;
+    --sidebar-border:             240 3.7% 15.9%;
+    --sidebar-ring:               74 100% 64%;
+
+    /* Custom calculator tokens */
+    --surface:        240 5.9% 10%;
+    --card-hover:     240 3.7% 13%;
+    --border-hover:   240 5% 25%;
+    --accent-dim:     74 100% 64% / 0.10;
+    --accent-text:    81 100% 44%;
+    --subtle:         240 4% 24%;
+    --info:           213 100% 65%;
+    --teal:           160 62% 50%;
+    --negative:       0 63% 59%;
   }
 }
 
@@ -56,7 +110,7 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Remove number input spinners globally */
+  /* Remove number input spinners */
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
