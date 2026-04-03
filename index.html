@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>adop.tools — Ad Operations Toolkit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #09090B;
+      --surface:      #111115;
+      --card:         #18181C;
+      --card-hover:   #1F1F25;
+      --border:       rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.15);
+      --accent:       #D4FF47;
+      --accent-dim:   rgba(212,255,71,0.10);
+      --accent-text:  #B8E000;
+      --text:         #F0EFE8;
+      --muted:        #6B6B70;
+      --subtle:       #3A3A40;
+      --info:         #4A9EFF;
+      --teal:         #2DD4A0;
+      --radius:       10px;
+      --radius-sm:    6px;
+      --font-display: 'Syne', sans-serif;
+      --font-body:    'IBM Plex Sans', sans-serif;
+      --font-mono:    'IBM Plex Mono', monospace;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ─── TOPBAR ─────────────────────────────────── */
+    .topbar {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .wordmark {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .wordmark-dot {
+      width: 22px;
+      height: 22px;
+      background: var(--accent);
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .topbar-tag {
+      padding: 3px 9px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── PANELS ─────────────────────────────────── */
+    .panels {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .panel-tools {
+      width: 33%;
+      min-width: 220px;
+      max-width: 320px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .panel-active {
+      flex: 1;
+      background: var(--bg);
+      overflow-y: auto;
+    }
+
+    /* ─── PANEL 1 — TOOL LIST ────────────────────── */
+    .panel-tools-header {
+      padding: 18px 18px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-tools-wordmark {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    .version-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--muted);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 2px 7px;
+    }
+
+    .tool-section-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 14px 18px 6px;
+    }
+
+    .tool-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 12px 18px;
+      background: none;
+      border: none;
+      border-left: 2px solid transparent;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: var(--font-body);
+      font-size: 13px;
+      text-align: left;
+      transition: all 0.15s;
+    }
+
+    .tool-btn:hover {
+      color: var(--text);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .tool-btn.active {
+      color: var(--accent);
+      background: var(--accent-dim);
+      border-left-color: var(--accent);
+    }
+
+    .tool-btn-icon {
+      font-size: 14px;
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .tool-btn-label {
+      flex: 1;
+    }
+
+    .tool-btn-arrow {
+      margin-left: auto;
+      opacity: 0;
+      transition: opacity 0.15s;
+      font-size: 12px;
+    }
+
+    .tool-btn:hover .tool-btn-arrow { opacity: 1; }
+    .tool-btn.active .tool-btn-arrow { opacity: 1; }
+
+    .panel-tools-footer {
+      margin-top: auto;
+      padding: 14px 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .panel-tools-footer-text {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--subtle);
+      line-height: 1.5;
+    }
+
+    /* ─── PANEL 2 — TOOL VIEW ────────────────────── */
+    .tool-view {
+      padding: 32px 36px;
+      max-width: 640px;
+    }
+
+    .tool-header {
+      margin-bottom: 24px;
+    }
+
+    .tool-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .tool-desc {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .tool-divider {
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 24px;
+    }
+
+    /* ─── MODE SWITCHER ──────────────────────────── */
+    .mode-switcher {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .mode-btn {
+      padding: 6px 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 0.02em;
+    }
+
+    .mode-btn:hover {
+      color: var(--text);
+      border-color: var(--border-hover);
+      background: var(--card-hover);
+    }
+
+    .mode-btn.active {
+      color: var(--accent);
+      background: var(--accent-dim);
+      border-color: rgba(212,255,71,0.25);
+    }
+
+    /* ─── INPUTS ─────────────────────────────────── */
+    .inputs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .input-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .input-field {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .input-field::placeholder {
+      color: var(--subtle);
+    }
+
+    .input-field:focus {
+      border-color: var(--accent);
+    }
+
+    /* remove number input arrows */
+    .input-field::-webkit-outer-spin-button,
+    .input-field::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .input-field[type=number] { -moz-appearance: textfield; }
+
+    .optional-section {
+      margin-bottom: 20px;
+    }
+
+    .optional-label-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .optional-tag {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--subtle);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 2px 7px;
+    }
+
+    /* ─── CALC BUTTON ────────────────────────────── */
+    .calc-btn {
+      width: 100%;
+      padding: 11px;
+      background: var(--accent);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: #000;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      margin-bottom: 24px;
+    }
+
+    .calc-btn:hover { opacity: 0.88; }
+    .calc-btn:active { transform: scale(0.98); }
+
+    /* ─── RESULT CARD ────────────────────────────── */
+    .result-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .result-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .result-value {
+      font-family: var(--font-mono);
+      font-size: 36px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .result-value.empty {
+      color: var(--subtle);
+      font-size: 28px;
+    }
+
+    /* ─── SECONDARY METRICS ──────────────────────── */
+    .secondary-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .metric-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+
+    .metric-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .metric-value.empty { color: var(--subtle); }
+    .metric-value.positive { color: var(--teal); }
+    .metric-value.negative { color: #E24B4A; }
+
+    /* ─── FLASH ANIMATION ────────────────────────── */
+    @keyframes flashResult {
+      0%   { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+      60%  { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+      100% { border-color: var(--border); box-shadow: none; }
+    }
+
+    .result-card.flash {
+      animation: flashResult 0.4s ease forwards;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 900px) {
+      .panels { flex-direction: column; }
+
+      .panel-tools {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        overflow-x: auto;
+        overflow-y: hidden;
+        flex-direction: row;
+        flex-shrink: 0;
+      }
+
+      .panel-tools-header { display: none; }
+      .tool-section-label { display: none; }
+      .panel-tools-footer { display: none; }
+
+      .panel-tools > .tool-btn {
+        display: inline-flex;
+        width: auto;
+        padding: 8px 14px;
+        border-left: none;
+        border-bottom: 2px solid transparent;
+        white-space: nowrap;
+      }
+
+      .panel-tools > .tool-btn.active {
+        border-left-color: transparent;
+        border-bottom-color: var(--accent);
+      }
+
+      .panel-active {
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .tool-view {
+        padding: 20px;
+      }
+
+      .inputs-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .secondary-metrics {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .result-value { font-size: 28px; }
+    }
+
+    @media (max-width: 500px) {
+      .secondary-metrics { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="wordmark">
+        <div class="wordmark-dot">A</div>
+        adop.tools
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-tag">Ad Operations</span>
+        <span class="topbar-tag">Free</span>
+      </div>
+    </header>
+
+    <!-- PANELS -->
+    <div class="panels">
+
+      <!-- PANEL 1: Tool List -->
+      <aside class="panel-tools" id="panel-tools">
+        <div class="panel-tools-header">
+          <span class="panel-tools-wordmark">adop.tools</span>
+          <span class="version-pill">v1</span>
+        </div>
+
+        <div class="tool-section-label">Calculators</div>
+
+        <button class="tool-btn active" id="btn-cpm" onclick="showTool('cpm')">
+          <span class="tool-btn-icon">⊞</span>
+          <span class="tool-btn-label">CPM / eCPM Calculator</span>
+          <span class="tool-btn-arrow">→</span>
+        </button>
+
+        <button class="tool-btn" id="btn-ctr" onclick="showTool('ctr')">
+          <span class="tool-btn-icon">▷</span>
+          <span class="tool-btn-label">CTR Calculator</span>
+          <span class="tool-btn-arrow">→</span>
+        </button>
+
+        <div class="panel-tools-footer">
+          <div class="panel-tools-footer-text">
+            Free tools for<br>ad operations teams.
+          </div>
+        </div>
+      </aside>
+
+      <!-- PANEL 2: Active Tool -->
+      <main class="panel-active" id="panel-active"></main>
+
+    </div>
+  </div>
+
+  <script>
+    // ─── STATE ───────────────────────────────────────────────────────────────
+    let activeTool = 'cpm';
+    let cpmMode = 'cpm';  // 'cpm' | 'cost' | 'imps'
+    let ctrMode = 'ctr';  // 'ctr' | 'clicks' | 'imps'
+
+    // ─── FORMATTERS ──────────────────────────────────────────────────────────
+    function fmtDollar(n) {
+      if (!isFinite(n)) return '—';
+      return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function fmtInt(n) {
+      if (!isFinite(n) || isNaN(n)) return '—';
+      return Math.round(n).toLocaleString('en-US');
+    }
+
+    function fmtPct(n) {
+      if (!isFinite(n) || isNaN(n)) return '—';
+      return n.toFixed(2) + '%';
+    }
+
+    function fmtNum(n, decimals = 2) {
+      if (!isFinite(n) || isNaN(n)) return '—';
+      return n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    }
+
+    // ─── FLASH ───────────────────────────────────────────────────────────────
+    function flashCard(id) {
+      const card = document.getElementById(id);
+      if (!card) return;
+      card.classList.remove('flash');
+      void card.offsetWidth;
+      card.classList.add('flash');
+    }
+
+    function setResultValue(id, val, isEmpty) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = val;
+      el.className = 'result-value' + (isEmpty ? ' empty' : '');
+    }
+
+    function setMetricValue(id, val, colorClass) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = val;
+      el.className = 'metric-value' + (colorClass ? ' ' + colorClass : '') + (val === '—' ? ' empty' : '');
+    }
+
+    // ─── CPM TOOL ────────────────────────────────────────────────────────────
+    const cpmConfig = {
+      cpm:  { labelA: 'Total Cost ($)',    labelB: 'Impressions',    phA: '2500.00', phB: '1000000', resultLabel: 'CPM' },
+      cost: { labelA: 'CPM ($)',           labelB: 'Impressions',    phA: '2.50',    phB: '1000000', resultLabel: 'Total Cost' },
+      imps: { labelA: 'Total Cost ($)',    labelB: 'CPM ($)',        phA: '2500.00', phB: '2.50',    resultLabel: 'Impressions' },
+    };
+
+    function renderCPM() {
+      const cfg = cpmConfig[cpmMode];
+      return `
+        <div class="tool-view">
+          <div class="tool-header">
+            <div class="tool-title">CPM / eCPM Calculator</div>
+            <div class="tool-desc">Calculate cost per thousand impressions, or solve for any missing variable.</div>
+          </div>
+          <div class="tool-divider"></div>
+
+          <div class="mode-switcher">
+            <button class="mode-btn ${cpmMode === 'cpm'  ? 'active' : ''}" onclick="setCPMMode('cpm')">→ CPM</button>
+            <button class="mode-btn ${cpmMode === 'cost' ? 'active' : ''}" onclick="setCPMMode('cost')">→ Cost</button>
+            <button class="mode-btn ${cpmMode === 'imps' ? 'active' : ''}" onclick="setCPMMode('imps')">→ Imps</button>
+          </div>
+
+          <div class="inputs-grid">
+            <div class="input-group">
+              <div class="input-label">${cfg.labelA}</div>
+              <input class="input-field" id="cpm-a" type="number" placeholder="${cfg.phA}" oninput="calcCPM()" />
+            </div>
+            <div class="input-group">
+              <div class="input-label">${cfg.labelB}</div>
+              <input class="input-field" id="cpm-b" type="number" placeholder="${cfg.phB}" oninput="calcCPM()" />
+            </div>
+          </div>
+
+          <div class="optional-section">
+            <div class="optional-label-row">
+              <div class="input-label" style="margin-bottom:0">Clicks</div>
+              <span class="optional-tag">optional</span>
+            </div>
+            <input class="input-field" id="cpm-clicks" type="number" placeholder="e.g. 1600" oninput="calcCPM()" />
+          </div>
+
+          <button class="calc-btn" onclick="calcCPMBtn()">Calculate</button>
+
+          <div class="result-card" id="cpm-result-card">
+            <div class="result-label" id="cpm-result-label">${cfg.resultLabel}</div>
+            <div class="result-value empty" id="cpm-result-value">—</div>
+          </div>
+
+          <div class="secondary-metrics">
+            <div class="metric-card">
+              <div class="metric-label">CTR</div>
+              <div class="metric-value empty" id="cpm-m-ctr">—</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">CPC</div>
+              <div class="metric-value empty" id="cpm-m-cpc">—</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">eCPM × 1k</div>
+              <div class="metric-value empty" id="cpm-m-ecpm">—</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function setCPMMode(mode) {
+      cpmMode = mode;
+      document.getElementById('panel-active').innerHTML = renderCPM();
+    }
+
+    function calcCPM(flash) {
+      const a = parseFloat(document.getElementById('cpm-a').value);
+      const b = parseFloat(document.getElementById('cpm-b').value);
+      const clicks = parseFloat(document.getElementById('cpm-clicks').value);
+
+      const aOk = isFinite(a) && a > 0;
+      const bOk = isFinite(b) && b > 0;
+
+      if (!aOk || !bOk) {
+        setResultValue('cpm-result-value', '—', true);
+        setMetricValue('cpm-m-ctr', '—');
+        setMetricValue('cpm-m-cpc', '—');
+        setMetricValue('cpm-m-ecpm', '—');
+        return;
+      }
+
+      let result, impsForCalc, costForCalc, cpmVal;
+
+      if (cpmMode === 'cpm') {
+        // CPM = (Cost / Imps) * 1000
+        result = (a / b) * 1000;
+        cpmVal = result;
+        impsForCalc = b;
+        costForCalc = a;
+        setResultValue('cpm-result-value', fmtDollar(result), false);
+      } else if (cpmMode === 'cost') {
+        // Cost = (CPM / 1000) * Imps
+        result = (a / 1000) * b;
+        cpmVal = a;
+        impsForCalc = b;
+        costForCalc = result;
+        setResultValue('cpm-result-value', fmtDollar(result), false);
+      } else {
+        // Imps = (Cost / CPM) * 1000
+        result = (a / b) * 1000;
+        cpmVal = b;
+        impsForCalc = result;
+        costForCalc = a;
+        setResultValue('cpm-result-value', fmtInt(result), false);
+      }
+
+      // CTR
+      const clicksOk = isFinite(clicks) && clicks > 0;
+      const ctr = clicksOk && impsForCalc > 0 ? (clicks / impsForCalc) * 100 : null;
+      setMetricValue('cpm-m-ctr', ctr !== null ? fmtPct(ctr) : '—');
+
+      // CPC
+      const cpc = clicksOk && costForCalc > 0 ? costForCalc / clicks : null;
+      setMetricValue('cpm-m-cpc', cpc !== null ? fmtDollar(cpc) : '—');
+
+      // eCPM x 1k (CPM * 1000)
+      const ecpm = isFinite(cpmVal) ? cpmVal * 1000 : null;
+      setMetricValue('cpm-m-ecpm', ecpm !== null ? fmtDollar(ecpm) : '—');
+
+      if (flash) flashCard('cpm-result-card');
+    }
+
+    function calcCPMBtn() {
+      calcCPM(true);
+    }
+
+    // ─── CTR TOOL ────────────────────────────────────────────────────────────
+    const ctrConfig = {
+      ctr:    { labelA: 'Clicks',       labelB: 'Impressions',  phA: '1600',   phB: '1000000', resultLabel: 'CTR' },
+      clicks: { labelA: 'CTR (%)',       labelB: 'Impressions',  phA: '0.16',   phB: '1000000', resultLabel: 'Clicks' },
+      imps:   { labelA: 'Clicks',       labelB: 'CTR (%)',       phA: '1600',   phB: '0.16',    resultLabel: 'Impressions' },
+    };
+
+    const CTR_BENCHMARK = 0.10;
+
+    function renderCTR() {
+      const cfg = ctrConfig[ctrMode];
+      return `
+        <div class="tool-view">
+          <div class="tool-header">
+            <div class="tool-title">CTR Calculator</div>
+            <div class="tool-desc">Calculate click-through rate, or solve for clicks or impressions.</div>
+          </div>
+          <div class="tool-divider"></div>
+
+          <div class="mode-switcher">
+            <button class="mode-btn ${ctrMode === 'ctr'    ? 'active' : ''}" onclick="setCTRMode('ctr')">→ CTR</button>
+            <button class="mode-btn ${ctrMode === 'clicks' ? 'active' : ''}" onclick="setCTRMode('clicks')">→ Clicks</button>
+            <button class="mode-btn ${ctrMode === 'imps'   ? 'active' : ''}" onclick="setCTRMode('imps')">→ Imps</button>
+          </div>
+
+          <div class="inputs-grid">
+            <div class="input-group">
+              <div class="input-label">${cfg.labelA}</div>
+              <input class="input-field" id="ctr-a" type="number" placeholder="${cfg.phA}" oninput="calcCTR()" />
+            </div>
+            <div class="input-group">
+              <div class="input-label">${cfg.labelB}</div>
+              <input class="input-field" id="ctr-b" type="number" placeholder="${cfg.phB}" oninput="calcCTR()" />
+            </div>
+          </div>
+
+          <button class="calc-btn" onclick="calcCTRBtn()">Calculate</button>
+
+          <div class="result-card" id="ctr-result-card">
+            <div class="result-label" id="ctr-result-label">${cfg.resultLabel}</div>
+            <div class="result-value empty" id="ctr-result-value">—</div>
+          </div>
+
+          <div class="secondary-metrics">
+            <div class="metric-card">
+              <div class="metric-label">Clicks per 1k Imps</div>
+              <div class="metric-value empty" id="ctr-m-per1k">—</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Industry Avg CTR</div>
+              <div class="metric-value" id="ctr-m-benchmark">0.10%</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">vs Benchmark</div>
+              <div class="metric-value empty" id="ctr-m-vs">—</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function setCTRMode(mode) {
+      ctrMode = mode;
+      document.getElementById('panel-active').innerHTML = renderCTR();
+    }
+
+    function calcCTR(flash) {
+      const a = parseFloat(document.getElementById('ctr-a').value);
+      const b = parseFloat(document.getElementById('ctr-b').value);
+
+      const aOk = isFinite(a) && a > 0;
+      const bOk = isFinite(b) && b > 0;
+
+      if (!aOk || !bOk) {
+        setResultValue('ctr-result-value', '—', true);
+        setMetricValue('ctr-m-per1k', '—');
+        setMetricValue('ctr-m-vs', '—');
+        return;
+      }
+
+      let result, ctrPct;
+
+      if (ctrMode === 'ctr') {
+        // CTR = (Clicks / Imps) * 100
+        result = (a / b) * 100;
+        ctrPct = result;
+        setResultValue('ctr-result-value', fmtPct(result), false);
+      } else if (ctrMode === 'clicks') {
+        // Clicks = (CTR / 100) * Imps
+        result = (a / 100) * b;
+        ctrPct = a;
+        setResultValue('ctr-result-value', fmtInt(result), false);
+      } else {
+        // Imps = Clicks / (CTR / 100)
+        result = a / (b / 100);
+        ctrPct = b;
+        setResultValue('ctr-result-value', fmtInt(result), false);
+      }
+
+      // Clicks per 1k
+      const per1k = (ctrPct * 10).toFixed(1);
+      setMetricValue('ctr-m-per1k', per1k);
+
+      // vs Benchmark
+      const vs = ctrPct - CTR_BENCHMARK;
+      const vsStr = (vs >= 0 ? '+' : '') + vs.toFixed(2) + '%';
+      setMetricValue('ctr-m-vs', vsStr, vs >= 0 ? 'positive' : 'negative');
+
+      if (flash) flashCard('ctr-result-card');
+    }
+
+    function calcCTRBtn() {
+      calcCTR(true);
+    }
+
+    // ─── TOOL SWITCHER ───────────────────────────────────────────────────────
+    function showTool(tool) {
+      activeTool = tool;
+
+      document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('btn-' + tool).classList.add('active');
+
+      const panel = document.getElementById('panel-active');
+      if (tool === 'cpm') {
+        panel.innerHTML = renderCPM();
+      } else if (tool === 'ctr') {
+        panel.innerHTML = renderCTR();
+      }
+    }
+
+    // ─── INIT ────────────────────────────────────────────────────────────────
+    showTool('cpm');
+  </script>
+</body>
+</html>
