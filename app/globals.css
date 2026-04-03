@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* shadcn HSL vars — dark-only site, values set directly */
+    --background:           240 6% 4%;       /* #09090B */
+    --foreground:           60 6% 93%;       /* #F0EFE8 */
+    --card:                 240 5% 9%;       /* #18181C */
+    --card-foreground:      60 6% 93%;
+    --popover:              240 5% 9%;
+    --popover-foreground:   60 6% 93%;
+    --primary:              74 100% 64%;     /* lime — same as accent */
+    --primary-foreground:   0 0% 0%;
+    --secondary:            240 4% 13%;      /* #1F1F25 */
+    --secondary-foreground: 60 6% 93%;
+    --muted:                240 4% 13%;
+    --muted-foreground:     240 4% 42%;      /* #6B6B70 */
+    --accent:               74 100% 64%;     /* #D4FF47 */
+    --accent-foreground:    0 0% 0%;
+    --destructive:          0 63% 59%;
+    --destructive-foreground: 60 6% 93%;
+    --border:               240 5% 15%;      /* rgba(255,255,255,0.07) equiv */
+    --input:                240 5% 15%;
+    --ring:                 74 100% 64%;
+    --radius:               0.625rem;        /* 10px */
+
+    /* Custom tokens */
+    --surface:              240 5% 7%;       /* #111115 */
+    --card-hover:           240 4% 13%;      /* #1F1F25 */
+    --border-hover:         240 5% 25%;
+    --accent-dim:           74 100% 64% / 0.10;
+    --accent-text:          81 100% 44%;     /* #B8E000 */
+    --subtle:               240 4% 24%;      /* #3A3A40 */
+    --info:                 213 100% 65%;    /* #4A9EFF */
+    --teal:                 160 62% 50%;     /* #2DD4A0 */
+    --negative:             0 63% 59%;       /* #E24B4A */
+  }
+}
+
+@layer base {
+  :root {
+    --font-syne: 'Syne', sans-serif;
+    --font-ibm-plex-mono: 'IBM Plex Mono', monospace;
+    --font-ibm-plex-sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Remove number input spinners globally */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
+
+@layer utilities {
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
